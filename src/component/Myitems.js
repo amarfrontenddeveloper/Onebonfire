@@ -16,7 +16,6 @@ import axios from 'axios';
 
 import {AuthContext} from './AuthProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ListData from './ListData';
 
 
 const ScreenWidth = Dimensions.get('window').width;
@@ -24,12 +23,12 @@ const ScreenWidth = Dimensions.get('window').width;
 const Myitems = ({navigation}) => {
   console.log('ScreenWidth', ScreenWidth);
   const [userItems, setuserItems] = useState([]);
-
+  const [gridView, setGridView] = useState(true);
   const {width, height} = Dimensions.get('screen');
 
-  const {userInfo} = useContext(AuthContext);
+  const {userInfo, token} = useContext(AuthContext);
 
-  console.log('myitem,token', userInfo.token);
+  console.log('token,token', token);
 
   useEffect(() => {
     axios
@@ -37,7 +36,7 @@ const Myitems = ({navigation}) => {
         'http://103.117.66.70:5001/api/ProductMain/allproducts?pageNumber=0&pageSize=10',
         {
           headers: {
-            Authorization: userInfo.token ? `Bearer ${userInfo.token}` : '',
+            Authorization: token ? `Bearer ${token}` : '',
             'Content-Type': 'Application/json',
           },
         },
@@ -45,13 +44,11 @@ const Myitems = ({navigation}) => {
       .then(res => setuserItems(res.data.items))
       // .then(res => setuserItems(res.data))
       .catch(e => console.warn(e));
-  }, [userInfo]);
+  }, [token]);
 
   console.log('userItems', userItems);
 
   const asyncData = AsyncStorage.getItem('userToken');
-  console.log('asyncData', userInfo);
-
   const renderItem = useCallback(({item}) => {
     return (
       <View style={{flex: 1, margin: 5, borderWidth: 1, alignItems: 'center'}}>
@@ -87,11 +84,11 @@ const Myitems = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <View style={{flexDirection: 'row', marginLeft: 20}}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('ListData')}
+          onPress={() => setGridView(false)}
           style={{flexDirection: 'row', marginLeft: 20}}>
           <Icons name="view-list" color="black" size={35} />
         </TouchableOpacity>
-        <TouchableOpacity style={{flexDirection: 'row', marginLeft: 20}}>
+        <TouchableOpacity onPress={() => setGridView(true)} style={{flexDirection: 'row', marginLeft: 20}}>
           <Icons
             name="view-grid"
             color="black"
@@ -103,8 +100,9 @@ const Myitems = ({navigation}) => {
       <FlatList
         data={userItems}
         renderItem={renderItem}
-        numColumns={2} 
+        numColumns={gridView ? 2 : 1} 
         horizontal={false}
+        key={gridView}
       />
       
     </SafeAreaView>

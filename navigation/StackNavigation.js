@@ -1,4 +1,5 @@
 import {createStackNavigator} from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Image, StyleSheet } from 'react-native';
 import Community from '../src/component/Community';
 import ListData from '../src/component/ListData';
@@ -13,7 +14,28 @@ const Stack = createStackNavigator();
 function StackNavigation() {
   return (
     <Stack.Navigator screenOptions={{headerTitleAlign:'center', headerTitle:()=>(
-      <Image style={styles.headerImg} source={require('../src/assest/logo.png')}/>
+      <Image style={styles.headerImg} source={require('../src/assest/logo.png')}
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home';
+          } else if (route.name === 'Community') {
+            iconName = focused ? 'account-details' : 'account-details';
+          } else if (route.name === 'My_Stuff') {
+            iconName = focused ? 'account-tie' : 'account-tie';
+          } else if (route.name === 'Messages') {
+            iconName = focused ? 'android-messages' : 'android-messages';
+          } else if (route.name === 'More') {
+            iconName = focused ? 'more' : 'more';
+          }
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'purple',
+        tabBarInactiveTintColor: 'gray',
+        // headerShown:false,
+      })}
+      />
     ),}}>
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Home" component={TabNavigations} />

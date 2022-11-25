@@ -20,4 +20,8 @@ const styles = StyleSheet.create({
     height: 42,
     alignSelf:'center',
   },
+  container:{
+    flex:1,
+
+  }
 });
